@@ -72,9 +72,9 @@
             type="button"
           ></button>
           <h3 class="popup__title">Editar perfil</h3>
-          <form class="popup__form" id="edit-profile-form">
+          <form class="form popup__form" id="edit-profile-form">
             <input
-              class="popup__input popup__input_type_name"
+              class="form__input popup__input popup__input_type_name"
               name="name"
               placeholder="Nombre"
               type="text"
@@ -83,9 +83,9 @@
               minlength="2"
               id="name"
             />
-            <span class="name-input-error popup__form__input-error"></span>
+            <span class="name-input-error form__input-error"></span>
             <input
-              class="popup__input popup__input_type_description"
+              class="form__input popup__input popup__input_type_description"
               name="description"
               placeholder="Acerca de mí"
               type="text"
@@ -94,7 +94,7 @@
               minlength="2"
               id="description"
             />
-            <span class="description-input-error popup__form__input-error"></span>
+            <span class="description-input-error form__input-error"></span>
             <button class="button popup__button" type="submit">Guardar</button>
           </form>
         </div>
@@ -107,9 +107,9 @@
             type="button"
           ></button>
           <h3 class="popup__title">Nuevo lugar</h3>
-          <form class="popup__form" id="new-card-form">
+          <form class="form popup__form" id="new-card-form">
             <input
-              class="popup__input popup__input_type_card-name"
+              class="form__input popup__input popup__input_type_card-name"
               name="place-name"
               placeholder="Título"
               minlength="2"
@@ -118,16 +118,16 @@
               type="text"
               id="place-name"
             />
-            <span class="place-name-input-error popup__form__input-error"></span>
+            <span class="place-name-input-error form__input-error"></span>
             <input
-              class="popup__input popup__input_type_url"
+              class="form__input popup__input popup__input_type_url"
               name="link"
               placeholder="Enlace a la imagen"
               required
               type="url"
               id="link"
             />
-            <span class="link-input-error popup__form__input-error"></span>
+            <span class="link-input-error form__input-error"></span>
             <button class="button popup__button" type="submit">Crear</button>
           </form>
         </div>

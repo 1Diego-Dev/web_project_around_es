@@ -5,7 +5,9 @@
   localmente para que se puedan visualizar correctamente
 */
 import {Card} from './Card.js';
-import {openModal, closeModal, handleEscOption} from './utils.js';
+import {FormValidator} from './FormValidator.js';
+import {openModal, closeModal, handleEscOption, imagesPopup, popupImagesClose, setModalEventListeners} from './utils.js';
+
 let initialCards = [
   {
     name: "Valle de Yosemite",
@@ -38,6 +40,14 @@ let initialCards = [
     link: "./images/lago-di-braies.jpg"
   }
 ];
+
+const configuracion = {
+  inputSelector: 'form__input',
+  submitButtonSelector: 'button',
+  inputErrorClass: 'form__input_type_error',
+  errorClass: 'form__input-error_active'
+};
+
 // Seleccion de todos los popups de la pagina
 const allPopups = document.querySelectorAll(".popup");
 
@@ -75,15 +85,11 @@ const createNewCardBtn = newCardForm.querySelector(".popup__button");
 const cardTitleInput = newCardForm.querySelector(".popup__input_type_card-name");
 const cardUrlInput = newCardForm.querySelector(".popup__input_type_url");
 
-// Limpia los mensajes de error y estados visuales de validación de un formulario
-function resetValidation(currentForm){
-  const currentFormInputs = currentForm.querySelectorAll(".popup__input")
-  currentFormInputs.forEach((input)=>{
-    hideInputError(input, currentForm)
-  })
-}
+const profileValidator = new FormValidator(configuracion, editForm);
+const cardValidator = new FormValidator(configuracion, newCardForm);
 
-
+profileValidator.setEventListeners();
+cardValidator.setEventListeners();
 // --------------------------------
 //     FUNCIONES PARA MANEJAR MODALES
 // --------------------------------
@@ -97,42 +103,8 @@ function fillProfileForm() {
 // Maneja la apertura del modal de edición de perfil
 function handleOpenEditModal() {
   fillProfileForm();
-  resetValidation(editForm)
+  profileValidator.resetValidation()
   openModal(editPopup);
-  toggleButtonState(editFormInputs, saveButton)
-}
-
-
-
-// --------------------------------
-//       ENVÍO DEL FORMULARIO
-// --------------------------------
-function showInputError(inputElement, errorMessage, currentForm){
-  const errorElement = currentForm.querySelector(`.${inputElement.id}-input-error`);
-  inputElement.classList.add("form__input_type_error");
-  errorElement.textContent = errorMessage;
-  errorElement.classList.add("form__input-error_active");
-}
-
-function hideInputError(inputElement, currentForm){
-  const errorElement = currentForm.querySelector(`.${inputElement.id}-input-error`);
-  inputElement.classList.remove("form__input_type_error");
-  errorElement.classList.remove("form__input-error_active");
-  errorElement.textContent = "";
-}
-
-//Valida todos los campos del formulario
-function hasInvalidInput(inputs){
-  return Array.from(inputs).some(input => !input.validity.valid);
-}
-
-//Cambia el estado del btoón dependiendo si todos los campos son válidos o no 
-function toggleButtonState(inputs, button){
-  if (hasInvalidInput(inputs)){
-    button.disabled = true;
-  }else{
-    button.disabled = false;
-  }
 }
 
 // Procesa el guardado de los nuevos datos del perfil
@@ -160,10 +132,7 @@ function handleCardFormSubmit(event){
 
   closeModal(newCardPopup);
   event.target.reset() // Limpia los campos del formulario
-  toggleButtonState(inputsCardForm, createNewCardBtn)
 }
-
-
 
 // Crea una tarjeta y la añade al contenedor especificado (usando prepend)
 function renderCard(name, link, cardsContainer){
@@ -178,51 +147,14 @@ initialCards.forEach(function(item){
 // --------------------------------
 //        EVENT LISTENERS
 // --------------------------------
-
+setModalEventListeners();
 // Eventos para el perfil y su modal de edición
 profileEditButton.addEventListener('click', handleOpenEditModal);
-popupCloseButton.addEventListener('click', () => closeModal(editPopup));
 editForm.addEventListener('submit', handleProfileFormSubmit);
 
 // Eventos para el modal de añadir nueva tarjeta
 profileAddBtn.addEventListener("click", () =>{
-  toggleButtonState(inputsCardForm, createNewCardBtn)
   openModal(newCardPopup)
-  resetValidation(newCardForm)
+  cardValidator.resetValidation();
 });
-popupCloseCard.addEventListener("click", ()=> closeModal(newCardPopup));
 newCardForm.addEventListener("submit", handleCardFormSubmit);
-
-// Evento para cerrar el modal de visualización de imágenes
-popupImagesClose.addEventListener("click", ()=> closeModal(imagesPopup));
-
-// Configura la validación en tiempo real para el formulario de perfil
-editFormInputs.forEach((input)=>{
-  input.addEventListener("input", ()=>{
-    toggleButtonState(editFormInputs, saveButton)
-    if(!input.validity.valid){
-      showInputError(input, input.validationMessage, editForm);
-    }else{
-      hideInputError(input, editForm);
-    }
-  })
-})
-// Configura la validación en tiempo real para el formulario de nueva tarjeta
-inputsCardForm.forEach((input)=>{
-  input.addEventListener("input", ()=>{
-      toggleButtonState(inputsCardForm, createNewCardBtn)
-      if(!input.validity.valid){
-        showInputError(input, input.validationMessage, newCardForm);
-      }else{
-        hideInputError(input, newCardForm);
-      }
-    })
-})
-// Configura el cierre de popups al hacer clic en la superposición (overlay)
-allPopups.forEach((popup)=>{
-  popup.addEventListener("mousedown",(event)=>{
-    if(event.target === event.currentTarget){
-      closeModal(popup)
-    }
-  })
-}) 

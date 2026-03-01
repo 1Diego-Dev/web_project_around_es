@@ -32,5 +32,22 @@ function handleEscOption(event){
   }
 }
 
-export {openModal, closeModal, handleEscOption}
+function setModalEventListeners() {
+  const popups = document.querySelectorAll(".popup");
+
+  popups.forEach((popup) => {
+    popup.addEventListener("mousedown", (event) => {
+      // Cierra si el clic es exactamente en el fondo oscuro (overlay)
+      if (event.target === event.currentTarget) {
+        closeModal(popup);
+      }
+      // Cierra si el clic es en el botón de la X
+      if (event.target.classList.contains("popup__close")) {
+        closeModal(popup);
+      }
+    });
+  });
+}
+
+export {openModal, closeModal, handleEscOption, setModalEventListeners}
 export {imagesPopup, popupImage, popupCaption, popupImagesClose}

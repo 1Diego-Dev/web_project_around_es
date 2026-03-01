@@ -4,6 +4,8 @@
   mediantes los links proporcionados, sin embargos los links están rotos, por lo tanto las imáagenes se están cargando 
   localmente para que se puedan visualizar correctamente
 */
+import {Card} from './Card.js';
+import {openModal, closeModal, handleEscOption} from './utils.js';
 let initialCards = [
   {
     name: "Valle de Yosemite",
@@ -73,42 +75,6 @@ const createNewCardBtn = newCardForm.querySelector(".popup__button");
 const cardTitleInput = newCardForm.querySelector(".popup__input_type_card-name");
 const cardUrlInput = newCardForm.querySelector(".popup__input_type_url");
 
-// Selección de elementos del popup de visualización de imágenes (Zoom)
-const imagesPopup = document.querySelector("#image-popup");
-const popupImage = imagesPopup.querySelector(".popup__image");
-const popupCaption = imagesPopup.querySelector(".popup__caption");
-const popupImagesClose = imagesPopup.querySelector(".popup__close");
-
-
-// Clase CSS que se utiliza para mostrar los popups
-const OPEN_CLASS = 'popup_is-opened';
-
-
-// --------------------------------
-//        FUNCIONES BASE
-// --------------------------------
-
-// Función para abrir cualquier modal añadiendo la clase de visibilidad
-function openModal(popup) {
-  popup.classList.add(OPEN_CLASS);
-  document.addEventListener("keydown", handleEscOption)
-}
-
-// Función para cerrar cualquier modal eliminando la clase de visibilidad
-function closeModal(popup) {
-  popup.classList.remove(OPEN_CLASS);
-  document.removeEventListener("keydown", handleEscOption)
-}
-
-// Maneja el cierre de modales mediante la tecla Escape
-function handleEscOption(event){
-  if (event.key === "Escape"){
-    const currentModalOpened = document.querySelector(".popup_is-opened")
-    if (currentModalOpened !== null) {
-      closeModal(currentModalOpened)
-    }
-  }
-}
 // Limpia los mensajes de error y estados visuales de validación de un formulario
 function resetValidation(currentForm){
   const currentFormInputs = currentForm.querySelectorAll(".popup__input")
@@ -190,55 +156,19 @@ function handleCardFormSubmit(event){
   const cardImage =  cardUrlInput.value;
 
   // Crea el elemento y lo inserta al principio de la lista
-  const newCard = getCardElement(cardTitle, cardImage);
-  cardsList.prepend(newCard);
+  renderCard(cardTitle, cardImage, cardsList);
 
   closeModal(newCardPopup);
   event.target.reset() // Limpia los campos del formulario
   toggleButtonState(inputsCardForm, createNewCardBtn)
 }
 
-function getCardElement(name, linkSrc){
-  // Clona la estructura del template HTML
-  const cardTemplate = document.querySelector("#cards__template").content;
-  const cardElement = cardTemplate.querySelector(".card").cloneNode(true);
 
-  const cardImage = cardElement.querySelector(".card__image");
-  const cardTitle = cardElement.querySelector(".card__title");
-  const cardLikeBtn = cardElement.querySelector(".card__description").querySelector(".card__like-button");
-  const cardDeleteBtn = cardElement.querySelector(".card__delete-button");
-
-  // Asigna los valores de la imagen y el título
-  cardImage.src = linkSrc;
-  cardImage.alt = name;
-  cardTitle.textContent = name;
-
-  // Manejador para el botón "Me gusta"
-  cardLikeBtn.addEventListener("click", (btn) =>{
-    btn.target.classList.toggle("card__like-button_is-active")
-  });
-
-  // Manejador para eliminar la tarjeta del DOM
-  cardDeleteBtn.addEventListener("click", (deleteBtn)=>{
-    deleteBtn.target.closest(".card").remove()
-  });
-
-  // Manejador para abrir la imagen en grande al hacer clic sobre ella
-  cardImage.addEventListener("click", ()=>{
-    popupCaption.textContent = name;
-    popupImage.src = linkSrc;
-    popupImage.alt = name;
-
-    openModal(imagesPopup);
-  });
-  return cardElement;
-
-}
 
 // Crea una tarjeta y la añade al contenedor especificado (usando prepend)
 function renderCard(name, link, cardsContainer){
-  const card = getCardElement(name, link);
-  cardsContainer.prepend(card);
+  const card = new Card(name, link, '#cards__template');
+  cardsContainer.prepend(card.generateCard());
 }
 
 // Bucle para renderizar todas las tarjetas iniciales del array

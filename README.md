@@ -26,10 +26,13 @@ Proyecto interactivo diseñado para gestionar una galería de imágenes de diver
 
 El código JavaScript ha sido dividido en módulos independientes para garantizar el principio de responsabilidad única:
 
-1. **`Card.js`**: Contiene la clase `Card`. Se encarga de crear cada tarjeta, clonar el template y asignar sus propios *event listeners* (eliminar, dar like y hacer zoom).
-2. **`FormValidator.js`**: Contiene la clase `FormValidator`. Gestiona toda la lógica de validación de los formularios, alternando el estado del botón de envío y mostrando/ocultando los errores.
-3. **`utils.js`**: Archivo de utilidades que almacena las funciones universales para manejar las ventanas modales (abrir, cerrar, cerrar con Escape y cerrar con clic en el *overlay*).
-4. **`index.js`**: El archivo principal (orquestador). Instancia las clases, define los datos iniciales y conecta los eventos principales de la página.
+1. **`Card.js`**: Contiene la lógica para instanciar cada tarjeta, clonar su template y gestionar sus eventos individuales (eliminar, dar like y notificar cuando se requiere hacer zoom).
+2. **`FormValidator.js`**: Gestiona toda la lógica de validación en tiempo real de los formularios, interactuando con las clases de CSS para mostrar u ocultar errores y gestionar el estado del botón de envío.
+3. **`Section.js`**: Se encarga de renderizar una lista de elementos (como el array inicial de tarjetas) y de inyectar nuevos elementos individuales directamente en el contenedor del DOM.
+4. **`Popup.js`**: Clase base que maneja las funciones universales de las ventanas modales, como abrir, cerrar y escuchar eventos de cierre (clic externo o tecla Escape).
+5. **`PopupWithImage.js` y `PopupWithForm.js`**: Clases hijas que heredan de `Popup`, especializadas en inyectar datos en el modal de visualización de imágenes y en procesar la recolección de datos de los formularios, respectivamente.
+6. **`UserInfo.js`**: Gestiona y sincroniza la visualización de la información del perfil del usuario en la página principal.
+7. **`index.js`**: El archivo principal (orquestador). Instancia todas las clases, inyecta las dependencias necesarias mediante callbacks (acoplamiento débil) y conecta los *event listeners* principales de la página.
 
 ## Link del proyecto:
-* https://1diego-dev.github.io/web_project_around_es/ *
+* https://1diego-dev.github.io/web_project_around_es/

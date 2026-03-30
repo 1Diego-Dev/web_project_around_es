@@ -11,7 +11,6 @@ import {PopupWithForm} from './PopupWithForm.js';
 import {PopupWithImage} from './PopupWithImage.js';
 import {Section} from './Section.js';
 import {FormValidator} from './FormValidator.js';
-import {setModalEventListeners} from './utils.js';
 
 let initialCards = [
   {
@@ -53,42 +52,16 @@ const configuracion = {
   errorClass: 'form__input-error_active'
 };
 
-// Seleccion de todos los popups de la pagina
-const allPopups = document.querySelectorAll(".popup");
-
 // Selección de elementos del perfil y el botón de edición
 const profile = document.querySelector('.profile');
 const profileInfo = profile.querySelector('.profile__info');
-const profileTitle = profileInfo.querySelector('.profile__title');
-const profileDescription = profileInfo.querySelector('.profile__description');
 const profileEditButton = profileInfo.querySelector('.profile__edit-button');
+const nameInput = document.querySelector('.popup__input_type_name');
+const descriptionInput = document.querySelector('.popup__input_type_description');
 
-// Selección de elementos del popup de edición de perfil
-const editPopup = document.querySelector('#edit-popup');
 const editForm = document.querySelector('#edit-profile-form');
-const popupCloseButton = editPopup.querySelector('.popup__close');
-const editFormInputs = editForm.querySelectorAll("input");
-const saveButton = editForm.querySelector(".popup__button");
-
-// Inputs del formulario de edición de perfil
-const nameInput = editForm.querySelector('.popup__input_type_name');
-const descriptionInput = editForm.querySelector('.popup__input_type_description');
-
-// Selección del contenedor principal de las tarjetas y el botón para añadir nuevas
-const cardsList = document.querySelector(".cards__list");
 const profileAddCardBtn = document.querySelector(".profile__add-button");
-
-// Selección de elementos del popup de nueva tarjeta
-const newCardPopup = document.querySelector("#new-card-popup");
-const popupAddCardContent = newCardPopup.querySelector(".popup__content");
-const popupCloseCard = popupAddCardContent.querySelector(".popup__close");
-const newCardForm = popupAddCardContent.querySelector("#new-card-form");
-const inputsCardForm = newCardForm.querySelectorAll("input");
-const createNewCardBtn = newCardForm.querySelector(".popup__button");
-
-// Inputs del formulario de nueva tarjeta
-const cardTitleInput = newCardForm.querySelector(".popup__input_type_card-name");
-const cardUrlInput = newCardForm.querySelector(".popup__input_type_url");
+const newCardForm = document.querySelector("#new-card-form");
 
 const profileValidator = new FormValidator(configuracion, editForm);
 const cardValidator = new FormValidator(configuracion, newCardForm);
@@ -101,7 +74,7 @@ cardValidator.setEventListeners();
 //------------------------
 
 //Instacia de usuario
-const user = new UserInfo(".profile__title", ".profile__description")
+const user = new UserInfo({name:".profile__title", description:".profile__description"})
 
 //Instancia de popup con imagen
 const popupWithImage = new PopupWithImage("#image-popup")
@@ -125,8 +98,8 @@ const popupEditProfile = new PopupWithForm('#edit-popup', (datos)=>{
 popupEditProfile.setEventListeners()
 
 //Instancia del popup de formulario de tarjeta
-const popupCardForm = new PopupWithForm('#new-card-poup', (datos)=>{
-  const formData =  {title: datos["place-name"], link: datos['link']}
+const popupCardForm = new PopupWithForm('#new-card-popup', (datos)=>{
+  const formData =  {name: datos["place-name"], link: datos['link']}
   const newCard = renderCard(formData)
   section.addItem(newCard)
   popupCardForm.close()
@@ -159,7 +132,6 @@ function renderCard(item){
 // --------------------------------
 //        EVENT LISTENERS
 // --------------------------------
-setModalEventListeners();
 // Eventos para el perfil y su modal de edición
 profileEditButton.addEventListener('click', handleOpenEditModal);
 

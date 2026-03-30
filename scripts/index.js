@@ -5,8 +5,13 @@
   localmente para que se puedan visualizar correctamente
 */
 import {Card} from './Card.js';
+import {UserInfo} from './UserInfo.js';
+import {Popup} from './Popup.js';
+import {PopupWithForm} from './PopupWithForm.js';
+import {PopupWithImage} from './PopupWithImage.js';
+import {Section} from './Section.js';
 import {FormValidator} from './FormValidator.js';
-import {openModal, closeModal, handleEscOption, imagesPopup, popupImagesClose, setModalEventListeners} from './utils.js';
+import {setModalEventListeners} from './utils.js';
 
 let initialCards = [
   {
@@ -71,7 +76,7 @@ const descriptionInput = editForm.querySelector('.popup__input_type_description'
 
 // Selección del contenedor principal de las tarjetas y el botón para añadir nuevas
 const cardsList = document.querySelector(".cards__list");
-const profileAddBtn = document.querySelector(".profile__add-button");
+const profileAddCardBtn = document.querySelector(".profile__add-button");
 
 // Selección de elementos del popup de nueva tarjeta
 const newCardPopup = document.querySelector("#new-card-popup");
@@ -90,71 +95,76 @@ const cardValidator = new FormValidator(configuracion, newCardForm);
 
 profileValidator.setEventListeners();
 cardValidator.setEventListeners();
+
+//------------------------
+// Instacias de las clases
+//------------------------
+
+//Instacia de usuario
+const user = new UserInfo(".profile__title", ".profile__description")
+
+//Instancia de popup con imagen
+const popupWithImage = new PopupWithImage("#image-popup")
+popupWithImage.setEventListeners()
+
+//Instancia de Section
+const section = new Section({
+  items: initialCards, 
+  renderer: (item)=>{
+    const newCard = renderCard(item)
+    section.addItem(newCard)
+  }
+},'.cards__list')
+section.renderItems()
+
+//Instancia de popup de pefil
+const popupEditProfile = new PopupWithForm('#edit-popup', (datos)=>{
+  user.setUserInfo(datos)
+  popupEditProfile.close()
+})
+popupEditProfile.setEventListeners()
+
+//Instancia del popup de formulario de tarjeta
+const popupCardForm = new PopupWithForm('#new-card-poup', (datos)=>{
+  const formData =  {title: datos["place-name"], link: datos['link']}
+  const newCard = renderCard(formData)
+  section.addItem(newCard)
+  popupCardForm.close()
+})
+popupCardForm.setEventListeners()
+
+
 // --------------------------------
 //     FUNCIONES PARA MANEJAR MODALES
 // --------------------------------
 
-// Rellena los inputs del formulario de perfil con el texto actual de la página
-function fillProfileForm() {
-  nameInput.value = profileTitle.textContent;
-  descriptionInput.value = profileDescription.textContent;
-}
-
 // Maneja la apertura del modal de edición de perfil
 function handleOpenEditModal() {
-  fillProfileForm();
+  const userData = user.getUserInfo()
   profileValidator.resetValidation()
-  openModal(editPopup);
+  popupEditProfile.open()
+  nameInput.value = userData.name
+  descriptionInput.value = userData.description
 }
 
-// Procesa el guardado de los nuevos datos del perfil
-function handleProfileFormSubmit(event) {
-  // Evita la recarga de la página al enviar
-  event.preventDefault();
-
-  // Actualiza perfil
-  profileTitle.textContent = nameInput.value;
-  profileDescription.textContent = descriptionInput.value;
-
-  closeModal(editPopup);
+// Crea una tarjeta y la añade al contenedor especificado
+function renderCard(item){
+  const card = new Card(item.name, item.link, '#cards__template', ()=>{
+    popupWithImage.open(item.link, item.name)
+  });
+  return card.generateCard()
 }
 
-// Procesa la creación de una nueva tarjeta desde el formulario
-function handleCardFormSubmit(event){
-  event.preventDefault();
 
-  // Evita la recarga de la página al enviar
-  const cardTitle =  cardTitleInput.value;
-  const cardImage =  cardUrlInput.value;
-
-  // Crea el elemento y lo inserta al principio de la lista
-  renderCard(cardTitle, cardImage, cardsList);
-
-  closeModal(newCardPopup);
-  event.target.reset() // Limpia los campos del formulario
-}
-
-// Crea una tarjeta y la añade al contenedor especificado (usando prepend)
-function renderCard(name, link, cardsContainer){
-  const card = new Card(name, link, '#cards__template');
-  cardsContainer.prepend(card.generateCard());
-}
-
-// Bucle para renderizar todas las tarjetas iniciales del array
-initialCards.forEach(function(item){
-  renderCard(item.name, item.link, cardsList);
-})
 // --------------------------------
 //        EVENT LISTENERS
 // --------------------------------
 setModalEventListeners();
 // Eventos para el perfil y su modal de edición
 profileEditButton.addEventListener('click', handleOpenEditModal);
-editForm.addEventListener('submit', handleProfileFormSubmit);
 
 // Eventos para el modal de añadir nueva tarjeta
-profileAddBtn.addEventListener("click", () =>{
-  openModal(newCardPopup)
+profileAddCardBtn.addEventListener("click", () =>{
+  popupCardForm.open()
   cardValidator.resetValidation();
 });
-newCardForm.addEventListener("submit", handleCardFormSubmit);

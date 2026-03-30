@@ -1,15 +1,13 @@
-import {imagesPopup, popupImage, popupCaption, openModal, closeModal, handleEscOption} from './utils.js';
-
-
 class Card{
-  constructor(text, link, cardSelector){
+  constructor(text, link, cardSelector, handleCardClick){
     this._text = text;
     this._link = link;
     this._cardSelector = cardSelector;
+    this._handleCardClick = handleCardClick
     this._element = this._getTemplate(); 
   }
   _getTemplate(){
-    console.log("El selector es:", this._templateSelector);
+    console.log("El selector es:", this._cardSelector);
     const cardElement = document.querySelector(this._cardSelector).content.querySelector('.card').cloneNode(true);
     return cardElement;
   }
@@ -34,11 +32,7 @@ class Card{
   }
   _setZoomListener(){
     this._element.querySelector(".card__image").addEventListener("click", ()=>{
-    popupCaption.textContent = this._text;
-    popupImage.src = this._link;
-    popupImage.alt = this._text;
-
-    openModal(imagesPopup);
+      this._handleCardClick(this._text,this._link);
   });
   }
   generateCard(){

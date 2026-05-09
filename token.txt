@@ -1,0 +1,19 @@
+{
+  "user": {
+    "name": "Jacques Cousteau",
+    "about": "Explorador",
+    "avatar": "https://practicum-content.s3.us-west-1.amazonaws.com/frontend-developer/common/avatar.jpg",
+    "_id": "5019131b30715b361ce947c4"
+  },
+  "token": "69f0bceb-42f6-40c2-a126-e0a21d5bcc5f"
+}
+
+{
+  "user": {
+    "name": "Jacques Cousteau",
+    "about": "Explorador",
+    "avatar": "https://practicum-content.s3.us-west-1.amazonaws.com/frontend-developer/common/avatar.jpg",
+    "_id": "1a40401c0bad4878dabd707f"
+  },
+  "token": "ecaa811e-a153-4702-920d-dc23b5e81f17"
+}

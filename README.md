@@ -1,38 +1,44 @@
 # Tripleten web_project_around_es
-# Around The U.S.
+# Around The U.S. (Conexión a API)
 
-Proyecto interactivo diseñado para gestionar una galería de imágenes de diversos lugares. La aplicación permite a los usuarios personalizar su información de perfil, añadir nuevas tarjetas a la colección, interactuar con ellas y visualizar imágenes en alta resolución a través de ventanas emergentes. En su versión más reciente, el proyecto ha sido refactorizado para implementar **Programación Orientada a Objetos (POO)** y **Módulos ES6**, mejorando su escalabilidad y mantenimiento.
+Proyecto interactivo diseñado para gestionar una galería de imágenes de diversos lugares. En esta fase final (Sprint 12), la aplicación ha dejado de ser estática para conectarse a un servidor real mediante una **API**, permitiendo la persistencia de datos y una interacción dinámica en tiempo real. Se ha implementado **JavaScript Asíncrono** y se han reforzado los principios de **POO** y **Arquitectura Modular**.
 
-## Funcionalidades
+## Funcionalidades Actualizadas
 
-* **Edición de Perfil**: Permite actualizar el nombre y la descripción del usuario mediante un modal.
-* **Validación de Formularios en Tiempo Real**: Sistema de validación robusto que evalúa los campos a medida que el usuario escribe, mostrando mensajes de error nativos del navegador y bloqueando el botón de envío si los datos son inválidos.
+* **Persistencia de Datos**: Toda la información (perfil, avatar y tarjetas) se sincroniza con un servidor remoto mediante peticiones `fetch`.
+* **Edición de Perfil y Avatar**: Permite actualizar el nombre, la descripción y la foto de perfil del usuario de forma permanente en el servidor (método `PATCH`).
 * **Gestión Dinámica de Tarjetas**:
-    * **Carga Inicial**: Los datos se generan a partir de un array de objetos utilizando la etiqueta `<template>`.
-    * **Creación de Tarjetas**: Formulario dedicado para añadir nuevos lugares, posicionándolos al inicio de la lista (prepend).
-    * **Eliminación y "Me Gusta"**: Funcionalidad para borrar tarjetas individuales o marcarlas como favoritas, gestionada de forma independiente por cada instancia de tarjeta.
-* **Interactividad y Visualización (Zoom)**: Al hacer clic en cualquier imagen, se despliega un modal que muestra la fotografía ampliada junto con su título descriptivo. Cierre de modales optimizado (clic en la "X", tecla Escape o clic en el fondo oscuro).
+    * **Carga Inicial**: Los datos se recuperan masivamente del servidor al iniciar la página utilizando `Promise.all`.
+    * **Creación y Borrado Seguro**: Las nuevas tarjetas se guardan en la base de datos (método `POST`) y el borrado requiere una confirmación previa para evitar acciones accidentales.
+    * **Control de Autoría**: El botón de eliminación solo es visible en las tarjetas creadas por el propio usuario.
+    * **Sistema de "Me Gusta"**: Funcionalidad de likes sincronizada con el servidor (métodos `PUT` y `DELETE`).
+* **Mejoras de Experiencia de Usuario (UX)**:
+    * **Indicadores de Carga**: Los botones de envío muestran estados como "Guardando..." o "Eliminando..." mientras se procesan las peticiones.
+    * **Feedback de Errores**: Se ha implementado un popup de error visual que notifica al usuario si una petición al servidor falla, sustituyendo los logs genéricos de consola.
+    * **Efectos Visuales**: La foto de perfil incluye un estado de hover con un icono de edición para mejorar la interactividad.
 
 ## Tecnologías Utilizadas
 
-* **HTML5**: Uso de etiquetas semánticas y elementos de plantilla (`<template>`).
-* **CSS3**: Maquetación basada en la metodología BEM y diseño responsivo.
+* **HTML5**: Etiquetas semánticas, validación nativa de formularios y elementos de plantilla.
+* **CSS3**: Metodología BEM, diseño responsivo y efectos de transición avanzados.
 * **JavaScript (ES6+)**: 
-  * Implementación de **Clases** (POO) para encapsular comportamientos.
-  * Uso de **Módulos (`import` / `export`)** para dividir el código según responsabilidades.
-  * Manipulación avanzada del DOM y gestión de eventos.
+  * **Fetch API**: Gestión de peticiones asíncronas HTTP.
+  * **Promesas**: Manejo de flujos de datos asíncronos y control de errores (`.then`, `.catch`, `.finally`).
+  * **POO Avanzada**: Encapsulamiento de lógica en clases especializadas y herencia.
 
 ## Estructura del Proyecto JS (Arquitectura Modular)
 
-El código JavaScript ha sido dividido en módulos independientes para garantizar el principio de responsabilidad única:
+El código se organiza en módulos independientes para garantizar escalabilidad y mantenimiento:
 
-1. **`Card.js`**: Contiene la lógica para instanciar cada tarjeta, clonar su template y gestionar sus eventos individuales (eliminar, dar like y notificar cuando se requiere hacer zoom).
-2. **`FormValidator.js`**: Gestiona toda la lógica de validación en tiempo real de los formularios, interactuando con las clases de CSS para mostrar u ocultar errores y gestionar el estado del botón de envío.
-3. **`Section.js`**: Se encarga de renderizar una lista de elementos (como el array inicial de tarjetas) y de inyectar nuevos elementos individuales directamente en el contenedor del DOM.
-4. **`Popup.js`**: Clase base que maneja las funciones universales de las ventanas modales, como abrir, cerrar y escuchar eventos de cierre (clic externo o tecla Escape).
-5. **`PopupWithImage.js` y `PopupWithForm.js`**: Clases hijas que heredan de `Popup`, especializadas en inyectar datos en el modal de visualización de imágenes y en procesar la recolección de datos de los formularios, respectivamente.
-6. **`UserInfo.js`**: Gestiona y sincroniza la visualización de la información del perfil del usuario en la página principal.
-7. **`index.js`**: El archivo principal (orquestador). Instancia todas las clases, inyecta las dependencias necesarias mediante callbacks (acoplamiento débil) y conecta los *event listeners* principales de la página.
+1. **`Api.js`**: Centraliza todas las llamadas al servidor (obtención de datos, actualizaciones y borrados).
+2. **`Card.js`**: Gestiona la lógica de las tarjetas, incluyendo la verificación de propietario y la gestión de eventos visuales.
+3. **`UserInfo.js`**: Sincroniza la información del usuario (nombre, acerca de mí y avatar) entre el servidor y el DOM.
+4. **`Section.js`**: Renderiza elementos en el DOM a partir de arrays de datos, ya sean locales o provenientes de la API.
+5. **`Popup.js`**: Clase base para el control de ventanas modales.
+6. **`PopupWithForm.js`**: Especializada en la recolección de datos y gestión de estados de carga en formularios.
+7. **`PopupWithConfirmation.js`**: Subclase diseñada para validar acciones críticas (como el borrado) antes de ejecutarlas.
+8. **`PopupError.js`**: Módulo para la visualización de mensajes de error técnicos en la interfaz de usuario.
+9. **`index.js`**: Orquestador principal que sincroniza las instancias de clases y define las funciones callback de interacción.
 
 ## Link del proyecto:
 * https://1diego-dev.github.io/web_project_around_es/

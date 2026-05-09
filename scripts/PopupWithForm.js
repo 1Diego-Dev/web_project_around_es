@@ -5,6 +5,9 @@ class PopupWithForm extends Popup{
     this._handleForm = handleForm
     this._popupForm = this._currentPopup.querySelector(".popup__form")
     this._formImputs = this._popupForm.querySelectorAll(".popup__input"); 
+
+    this._submitButton = this._popupForm.querySelector(".popup__button");
+    this._originalButtonText = this._submitButton.textContent;
   }
 
   _getInputValues(){
@@ -23,7 +26,13 @@ class PopupWithForm extends Popup{
       this._handleForm(this._getInputValues())
     })
   }
-
+  renderLoading(isLoading){
+    if (isLoading == true){
+      this._submitButton.textContent = "Guardando..."
+    }else{
+      this._submitButton.textContent = this._originalButtonText
+    }
+  }
   close(){
     super.close();
     this._popupForm.reset()

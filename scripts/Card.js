@@ -1,10 +1,13 @@
 class Card{
-  constructor(text, link, cardSelector, handleCardClick){
+  constructor(text, link, cardSelector, handleCardClick, ownerId, userId, handleDeleteClick){
     this._text = text;
     this._link = link;
     this._cardSelector = cardSelector;
     this._handleCardClick = handleCardClick
     this._element = this._getTemplate(); 
+    this._ownerId = ownerId
+    this._userId = userId;
+    this._handleDeleteClick = handleDeleteClick;
   }
   _getTemplate(){
     console.log("El selector es:", this._cardSelector);
@@ -26,9 +29,7 @@ class Card{
   }
 
   _setDeleteEventListener(){
-    this._element.querySelector(".card__delete-button").addEventListener("click", (deleteBtn)=>{
-      deleteBtn.target.closest(".card").remove()
-    });
+    this._element.querySelector(".card__delete-button").addEventListener("click", this._handleDeleteClick);
   }
   _setZoomListener(){
     this._element.querySelector(".card__image").addEventListener("click", ()=>{
@@ -36,11 +37,17 @@ class Card{
   });
   }
   generateCard(){
+    if(this._ownerId != this._userId){
+      this._element.querySelector(".card__delete-button").remove();
+    }
     this._setDataCard();
     this._setLikeEventListener();
     this._setDeleteEventListener();
     this._setZoomListener();
     return this._element;
+  }
+  removeCard(){
+    this._element.remove()
   }
 }
 

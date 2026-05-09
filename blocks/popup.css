@@ -66,6 +66,12 @@
   padding: 34px 36px;
 }
 
+.popup__content_confirm-delete{
+  min-height: 181px;
+}
+.pop__avatar-hover:hover{
+  background-color: #000;
+}
 .popup__form {
   margin-top: 27px;
 }
@@ -86,6 +92,12 @@
   font-size: 24px;
   font-weight: 900;
   line-height: 30px;
+}
+.popup__text{
+  margin: 0;
+  font-size: 14px;
+  font-weight: 900;
+  line-height: 25px;
 }
 
 .popup_is-opened {
